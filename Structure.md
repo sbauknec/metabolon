@@ -1,0 +1,21 @@
+Generelle Dateienstruktur des Projektes
+Metabolon [root]
+├── Dokumentation/                  (Technische Daten, Diagramme, Nutzerhinweise und Handbuch)
+├── src/
+│   ├── Controllers/                (WebAPI Endpunkte benannt nach dem DB Set, das dieser primär verändert)
+│   ├── DTOs/                       ([D]ata [T]ransfer [O]bjects | Mappable Komponenten, die den Empfang von Daten aus dem Frontend erleichtert)
+│   ├── Generic/                    (Generische Komponenten zur Wiederverwendung, DoNotTouch es sei denn es ist kritisch)
+│   ├── Migrations/                 (Logs der vergangenen Migrationsausführungen, in denen die Struktur der Datenbank verändert wurde)
+│   ├── Models/                     (Objektklassen/Datenhaltungsklassen, die für die Einspeisung in die Datenbank optimiert sind)
+│   ├── obj/                        (Klassen und Settings für die Module des Systems)
+│   ├── Profiles/                   (Mapping-Profile für die Übertragung von DTO auf Model und vice versa)
+│   ├── Properties/                 (Starteinstellungen für das System)
+│   ├── Services/                   (Modulerweiterungen für Services bspw. E-mail Funktionalität)
+│   ├── AppDbContext.cs             (DBSets für die Datenbankanbindung)
+│   ├── appsettings.json            (Und appsettings.Development.json, Laufzeiteinstellungen, automatisch generiert, in Ruhe lassen)
+│   ├── metabolon.csproj            (Gradle-einstellungen, registriert die .NET Version des Projekts und alle erforderlichen Module, nur im Härtefall anfassen)
+│   ├── metabolon.http              (Host- und Porteinstellungen)
+│   ├── metabolon.sln               (Automatisch erstellt, da bin ich mir selber nicht so sicher was das eigentlich ist, in Ruhe lassen)
+│   ├── Program.cs                  (Startdatei des Systems, Service-Initialisierung, Datenbankanbindung, SwaggerUI zur Dokumentation und für Tests wird initialisiert etc.)
+├── Readme.md                       (Mission Statement, Feature-Liste, Tech Stack)
+├── Structure.md                    (Diese Datei :>)
