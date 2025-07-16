@@ -1,4 +1,4 @@
-Name > :metabolon Dokumenten- und Geräteverwaltungs-Software Backend und Datenverarbeitung
+Name > :metabolon Dokumenten- und Geräteverwaltungs-Software Backend und Datenverarbeitung<br>
 Goal > Anlage und Verwaltung von Dokumenten bezogen auf Labore, Arbeitsräume und Gerätschaften vorort, sowie Bestandszählung und Verwaltung von Lagerobjekten und Verwaltung von Nutzerkonten der Studenten bzw. des Personals
 Audience > Personal, Studenten und Administratoren des :metabolon Forschungsprojekts
 Outcome > Ein funktionierendes Backend, das dazu in der Lage ist Räume und Geräte aufzunehmen, die Dokumente dazu zu verwalten, das Lager dynamisch zu updaten und das Personal dazu zuzuordnen
