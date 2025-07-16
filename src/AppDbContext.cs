@@ -10,4 +10,6 @@ public class AppDbContext : DbContext
     //Und ermöglicht dem System die Übertragung von Objekten in Records mit gleichen (gleichnamigen) Attributfeldern
     // { get; set; } bedeutet hier, dass das System in der Lage ist records in der Datenbank anzulegen, zu verändern und zu lesen
 
+    public DbSet<User> Users { get; set; }
+    
 }

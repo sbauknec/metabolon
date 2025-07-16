@@ -14,4 +14,7 @@ public class User : IEntity
     public DateTime Transponder_Exp_Date { get; set; }
     public bool IsExpired { get; set; } = false;
     public bool HasDrivingLicense { get; set; } = false;
+
+    //Verifikation
+    public string? verificationToken { get; set; }
 }

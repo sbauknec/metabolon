@@ -5,3 +5,6 @@
 # NuGet package cache
 .nuget/
 **/packages/
+
+# Ignore DB Migrations
+**/Migrations/
