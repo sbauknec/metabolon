@@ -1,0 +1,17 @@
+namespace metabolon.Models;
+
+using metabolon.Generic;
+
+public class User : IEntity
+{
+    public int Id { get; set; }
+    public string? Name { get; set; } = "";
+    public required string Mail { get; set; }
+    public string? Password { get; set; } = "";
+    public int Present_Room_Id { get; set; }
+    public int Supervisor_Id { get; set; }
+    public bool HasTransponder { get; set; } = false;
+    public DateTime Transponder_Exp_Date { get; set; }
+    public bool IsExpired { get; set; } = false;
+    public bool HasDrivingLicense { get; set; } = false;
+}

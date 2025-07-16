@@ -1,0 +1,7 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+
+# NuGet package cache
+.nuget/
+**/packages/
