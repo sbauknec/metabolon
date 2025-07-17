@@ -37,10 +37,25 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
         var model = _mapper.Map<User>(user);
         //TODO: Add Default value assignment if applicable here
 
-        //TODO: Add Token saving and Email verification functionality on register
+        model.verificationToken = GenerateVerificationToken();
+        //TODO: Add Email sending logic
 
         _context.Users.Add(model);
-        //TODO: Think about the validity of sending Model vs sending DTO
-        return CreatedAtAction(nameof(GetById), new { id = model.Id }, model);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = model.Id }, _mapper.Map<UserDTO>(model));
+    }
+
+    [HttpGet("verify")]
+    public async Task<ActionResult> VerifyUser(string token)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.verificationToken == token);
+        if (user == null) return BadRequest("Invalider Token");
+
+        user.IsVerified = true;
+        user.verificationToken = "";
+
+        await _context.SaveChangesAsync();
+        return Ok();
     }
 }

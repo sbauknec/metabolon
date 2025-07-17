@@ -1,3 +1,4 @@
+using System.Reflection.PortableExecutable;
 using Microsoft.EntityFrameworkCore;
 namespace metabolon.Models;
 
@@ -11,5 +12,7 @@ public class AppDbContext : DbContext
     // { get; set; } bedeutet hier, dass das System in der Lage ist records in der Datenbank anzulegen, zu verändern und zu lesen
 
     public DbSet<User> Users { get; set; }
+    public DbSet<Room> Rooms { get; set; }
+    public DbSet<Device> Devices { get; set; }
     
 }

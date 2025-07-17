@@ -53,8 +53,7 @@ public abstract class GenericControllerBase<TEntity, TDTO> : ControllerBase
 
         var entity = await GetDbSet().FirstOrDefaultAsync(o => o.Id == id);
         if (entity == null) return NotFound();
-        //TODO: Think about the validity of sending Model vs sending DTO
-        else return Ok(entity);
+        else return Ok(_mapper.Map<TDTO>(entity));
     }
 
     // Generische POST Methode mit Body Input
@@ -74,10 +73,10 @@ public abstract class GenericControllerBase<TEntity, TDTO> : ControllerBase
         GetDbSet().Add(model);
         await _context.SaveChangesAsync();
 
-        //TODO: Think about the validity of sending Model vs sending DTO
-        return CreatedAtAction(nameof(GetById), new { id = model.Id }, dto);
+        return CreatedAtAction(nameof(GetById), new { id = model.Id }, _mapper.Map<TDTO>(model));
     }
 
+    // Generische PUT Methode mit ID und Body Input
     [HttpPut("{id}")]
     public virtual async Task<ActionResult<TDTO>> Update([FromBody] TDTO dto, int id)
     {
@@ -88,7 +87,7 @@ public abstract class GenericControllerBase<TEntity, TDTO> : ControllerBase
         _context.Entry(db_model).CurrentValues.SetValues(dto);
         await _context.SaveChangesAsync();
 
-        return Ok(dto);
+        return Ok(_mapper.Map<TDTO>(db_model));
     }
 
     [HttpDelete("{id}")]
