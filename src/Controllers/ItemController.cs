@@ -11,7 +11,7 @@ using metabolon.Models;
 [Route("api/[Controller]")]
 [ApiController]
 
-public class DeviceController(AppDbContext context, IMapper mapper) : GenericControllerBase<Device, DeviceDTO>(context, mapper)
+public class ItemController(AppDbContext context, IMapper mapper) : GenericControllerBase<Item, ItemDTO>(context, mapper)
 {
-    protected override DbSet<Device> GetDbSet() => _context.Devices;
+    protected override DbSet<Item> GetDbSet() => _context.Items;
 }

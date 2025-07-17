@@ -17,5 +17,11 @@ public class MapperProfile : Profile
 
         CreateMap<Device, DeviceDTO>();
         CreateMap<DeviceDTO, Device>();
+
+        CreateMap<Item, ItemDTO>();
+        CreateMap<ItemDTO, Item>();
+
+        CreateMap<Document, DocumentDTO>();
+        CreateMap<DocumentDTO, Document>();
     }
 }
