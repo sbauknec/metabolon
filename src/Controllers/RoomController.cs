@@ -11,7 +11,7 @@ using metabolon.Models;
 [Route("api/[Controller]")]
 [ApiController]
 
-public class RoomController(AppDbContext context, IMapper mapper) : GenericControllerBase<Room, RoomDTO>(context, mapper)
+public class RoomController(AppDbContext context, IMapper mapper) : GenericControllerBase<Room, RoomDTO, RoomCreateDTO>(context, mapper)
 {
     protected override DbSet<Room> GetDbSet() => _context.Rooms;
 }

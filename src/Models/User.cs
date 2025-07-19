@@ -2,6 +2,8 @@ namespace metabolon.Models;
 
 using metabolon.Generic;
 
+//TODO: Figure out eager loading viability on fields
+
 public class User : IEntity
 {
     public int Id { get; set; }
@@ -9,11 +11,7 @@ public class User : IEntity
     public required string Mail { get; set; }
     public string? Password { get; set; } = "";
     public int Present_Room_Id { get; set; }
-    //Eager loading
-    public Room? Present_Room { get; set; }
     public int Supervisor_Id { get; set; }
-    //Eager loading
-    public User? Supervisor { get; set; }
     public bool HasTransponder { get; set; } = false;
     public DateTime Transponder_Exp_Date { get; set; }
     public bool IsExpired { get; set; } = false;

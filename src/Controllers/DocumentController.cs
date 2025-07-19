@@ -11,7 +11,8 @@ using metabolon.Models;
 [Route("api/[Controller]")]
 [ApiController]
 
-public class DocumentController(AppDbContext context, IMapper mapper) : GenericControllerBase<Document, DocumentDTO>(context, mapper)
+//TODO: Update Document Create DTO
+public class DocumentController(AppDbContext context, IMapper mapper) : GenericControllerBase<Document, DocumentDTO, DocumentDTO>(context, mapper)
 {
     protected override DbSet<Document> GetDbSet() => _context.Documents;
 }

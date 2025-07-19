@@ -17,5 +17,6 @@ Metabolon [root]<br>
 │   ├── metabolon.http              (Host- und Porteinstellungen)<br>
 │   ├── metabolon.sln               (Automatisch erstellt, da bin ich mir selber nicht so sicher was das eigentlich ist, in Ruhe lassen)<br>
 │   ├── Program.cs                  (Startdatei des Systems, Service-Initialisierung, Datenbankanbindung, SwaggerUI zur Dokumentation und für Tests wird initialisiert etc.)<br>
+├── .gitignore                      (Liste an Dateien / Ordnern, die nicht mit in das GitHub Verzeichnis geladen werden [NuGet Pakete, Logs, VisualStudioCode spezifische Dateien])
 ├── Readme.md                       (Mission Statement, Feature-Liste, Tech Stack)<br>
 ├── Structure.md                    (Diese Datei :>)<br>

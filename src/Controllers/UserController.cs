@@ -17,12 +17,27 @@ using metabolon.Models;
 //Überschreibt die POST methode mit der Registrierungslogik -> Die Registrierung erfolgt über E-Mail und schickt einen Token an die Target Mail
 //Fügt eine '/verify' Route hinzu, mit der die Verifikation erfolgt, indem der eingehende Token geprüft wird
 
-public class UserController(AppDbContext context, IMapper mapper) : GenericControllerBase<User, UserDTO>(context, mapper)
+public class UserController(AppDbContext context, IMapper mapper) : GenericControllerBase<User, UserDTO, UserCreateDTO>(context, mapper)
 {
     //Helfermethode für die GenericControllerBase Logik
     protected override DbSet<User> GetDbSet() => _context.Users;
     //Simple Generierung für den Verifikations-Token, für die Registrierung
     private string GenerateVerificationToken() => Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+
+    [HttpPost("login")]
+    public async Task<ActionResult<UserDTO>> Login([FromBody] UserAuthDTO user)
+    {
+        //TODO: Token logic to determine login / password update
+
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var entry = await _context.Users.FirstOrDefaultAsync(u => u.Mail == user.Mail);
+
+        //TODO: Hashing Logic
+
+        if (entry == null) return NotFound();
+        else if (entry.Password == user.Password) return Ok(_mapper.Map<UserDTO>(entry));
+        else return Forbid("Invalid Password");
+    }
 
     //POST Methode, semantisch: Registrierung eines neuen Nutzers
     //1. Das DTO kommt vom Body der HTTPRequest rein, und es wird überprüft, dass alle Attribute vom korrekten Datentyp und im korrekten Format vorhanden sind
@@ -30,7 +45,7 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
     //3. Dem Model wird in der Datenbank ein Parameter für den Verifikationstoken angefügt, der selbe Token wird in einen Link eingefügt und per E-Mail verschickt
     //4. Das Model wird in die Datenbank eingespeichert und eine Success Response zurück an den Client geschickt
     [HttpPost]
-    public async override Task<ActionResult<UserDTO>> Create([FromBody] UserDTO user)
+    public async override Task<ActionResult<UserDTO>> Create([FromBody] UserCreateDTO user)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 

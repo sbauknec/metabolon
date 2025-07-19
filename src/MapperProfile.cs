@@ -11,6 +11,8 @@ public class MapperProfile : Profile
     {
         CreateMap<User, UserDTO>();
         CreateMap<UserDTO, User>();
+        CreateMap<UserCreateDTO, User>();
+        CreateMap<User, UserQueryDTO>();
 
         CreateMap<Room, RoomDTO>();
         CreateMap<RoomDTO, Room>();

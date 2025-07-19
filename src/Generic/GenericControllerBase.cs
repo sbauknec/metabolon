@@ -12,7 +12,7 @@ using metabolon.Models;
 //Virtual in den einzelnen Methoden bedeutet, dass die Controller die Möglichkeit haben diese Basisfunktionen vollständig zu überschreiben, aber nicht dazu verpflichtet sind
 //Im Fall, dass sie überschreiben wird ihre Logik für die Methoden benutzt, und die in dieser Klasse ignoriert. Falls sie das nicht tun, wird diese Logik als Default verwendet
 //Hier existiert nur der extremste Basisfall, bspw. die Create() Methode checkt nur, ob das Objekt ordentlich erstellt wurde und schiebt es dann in die Datenbank
-public abstract class GenericControllerBase<TEntity, TDTO> : ControllerBase
+public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO> : ControllerBase
     where TEntity : class, IEntity
     where TDTO : class
 {
@@ -63,7 +63,7 @@ public abstract class GenericControllerBase<TEntity, TDTO> : ControllerBase
     //2. Das DTO wird zu einem Model gemappt
     //3. Das Model wird in die Datenbank gespeichert und an den Client zurückgeschickt
     [HttpPost]
-    public virtual async Task<ActionResult<TDTO>> Create([FromBody] TDTO dto)
+    public virtual async Task<ActionResult<TDTO>> Create([FromBody] TCreateDTO dto)
     {
         //TODO: apply middleware for checking Session Token
 
