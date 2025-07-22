@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 //Die Felder in dieser Datei werden an den Nutzer zurückgeschickt
 //Omit ALLE sensitiven Felder, bspw. Passwort
 //Expose alle Objekte, aber nicht Ihre ID's
-
+//Query alle Sub-Entities
 public class UserDTO
 {
     public int Id { get; set; }
@@ -26,7 +26,6 @@ public class UserDTO
 //Registrierung, Login, Passwortveränderung, etc.
 //REINES INPUT DTO
 //Wird niemals exposet, d.h. an den Nutzer geschickt, ist nur rein Inputschema
-
 public class UserAuthDTO
 {
     [MinLength(1)]
@@ -38,7 +37,6 @@ public class UserAuthDTO
 //DTO - Query
 //Wenn das Objekt in einem anderen DTO nested ist, z.B. wenn wir im UserDTO ein UserDTO anfragen was THEORETISCH wieder ein DTO anfragt usw.
 //Dann wollen wir eher ein Query DTO, um endloses Looping zu vermeiden, da dieses der einfachste Weg ist das System zum Absturz zu treiben
-
 public class UserQueryDTO
 {
     public int Id { get; set; }

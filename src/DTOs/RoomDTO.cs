@@ -6,8 +6,9 @@ using metabolon.Models;
 
 //DTO - Exposure
 //Die Felder in dieser Datei werden an den Nutzer zurückgeschickt
-//Omit ALLE sensitiven Felder, bspw. Passwort
+//Omit ALLE sensitiven bzw. zwecklosen Felder
 //Expose alle Objekte, aber nicht Ihre ID's
+//Query alle Sub-Entities
 public class RoomDTO
 {
     public int Id { get; set; }
@@ -31,9 +32,12 @@ public class RoomQueryDTO
     public int Supervisor_Id { get; set; }
 }
 
+//DTO - Create
+//Input DTO
+//Beim Anlegen ist nur der Name erforderlich, die Aufsichtsperson dabei optional oder nachreichbar
 public class RoomCreateDTO
 {
     [MinLength(1)]
     public required string Name { get; set; }
-    public int? Supervisor { get; set; }
+    public int? Supervisor_Id { get; set; }
 }

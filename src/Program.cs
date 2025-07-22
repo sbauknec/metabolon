@@ -4,21 +4,25 @@ using metabolon.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Setup, Controller und SwaggerUI
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
 
+//Setup, Datenbank Verbindung
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")).LogTo(Console.WriteLine, LogLevel.Information));
 
+//Setup, Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+//Konfiguration, Dev Logger und so weiter, auch Ports
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
 }
 
+//Konfiguration, Swagger UI, Pipeline, Endpunkt
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {

@@ -2,7 +2,7 @@ namespace metabolon.Models;
 
 using metabolon.Generic;
 
-//TODO: Figure out eager loading viability on fields
+//TODO: Figure out eager loading viability on fields based on computing needs
 
 public class User : IEntity
 {
