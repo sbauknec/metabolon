@@ -12,7 +12,7 @@ using metabolon.Models;
 [ApiController]
 
 //TODO: Update Document Create DTO
-public class DocumentController(AppDbContext context, IMapper mapper) : GenericControllerBase<Document, DocumentDTO, DocumentDTO>(context, mapper)
+public class DocumentController(AppDbContext context, IMapper mapper) : GenericControllerBase<Document, DocumentDTO, DocumentDTO, DocumentDTO>(context, mapper)
 {
     protected override DbSet<Document> GetDbSet() => _context.Documents;
 }

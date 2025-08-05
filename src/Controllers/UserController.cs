@@ -20,7 +20,7 @@ using Microsoft.AspNetCore.Identity;
 //Überschreibt die POST methode mit der Registrierungslogik -> Die Registrierung erfolgt über E-Mail und schickt einen Token an die Target Mail
 //Fügt eine '/verify' Route hinzu, mit der die Verifikation erfolgt, indem der eingehende Token geprüft wird
 
-public class UserController(AppDbContext context, IMapper mapper) : GenericControllerBase<User, UserDTO, UserCreateDTO>(context, mapper)
+public class UserController(AppDbContext context, IMapper mapper) : GenericControllerBase<User, UserDTO, UserCreateDTO, UserPutDTO>(context, mapper)
 {
     //Helfermethode für die GenericControllerBase Logik
     protected override DbSet<User> GetDbSet() => _context.Users;
@@ -50,6 +50,18 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
         else return Unauthorized("Invalid Password");
     }
 
+    [HttpPost("password")]
+    public async Task<ActionResult> SetPassword([FromBody] UserAuthDTO user)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var entry = await GetDbSet().FirstOrDefaultAsync(u => u.Mail == user.Mail);
+        if (entry == null) return NotFound();
+
+        entry.Password = user.Password;
+        return Ok();
+    }
+
     //POST Methode, semantisch: Registrierung eines neuen Nutzers
     //1. Das DTO kommt vom Body der HTTPRequest rein, und es wird überprüft, dass alle Attribute vom korrekten Datentyp und im korrekten Format vorhanden sind
     //2. Das DTO wird aufs Model gemappt, indem den Attributen, die nicht vorhanden sind, entweder Default Werte oder generierte Werte angefügt werden
@@ -58,6 +70,8 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
     [HttpPost]
     public async override Task<ActionResult<UserDTO>> Create([FromBody] UserCreateDTO user)
     {
+        
+        Console.WriteLine("In Override!");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = _mapper.Map<User>(user);
@@ -77,7 +91,7 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
     //1. Der Token kommt als string rein
     //2. Aus der DB wird ein Record gesucht, in dem dieser Token existiert
     //3. IsVerified wird umgesetzt, was Webzugriff gewährt, der Token wird aus dem Record gelöscht
-    //4. Es geht ein einfaches 200 - OK zurück, ohne Inhalt
+    //4. Es geht ein einfaches 200 - OK zurück, ohne Inhalt => Auf der Client Seite wird hier weitergeleitet zum Passwort setzen
     [HttpGet("verify")]
     public async Task<ActionResult> VerifyUser(string token)
     {

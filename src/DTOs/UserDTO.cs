@@ -44,6 +44,21 @@ public class UserQueryDTO
     public string? Name { get; set; }
 }
 
+//DTO - Update
+//Input DTO
+//Veränderbare Werte für User
+public class UserPutDTO
+{
+    public string? Mail { get; set; }
+    public string? Name { get; set; }
+    public int? Present_Room_Id { get; set; }
+    public int? Supervisor_Id { get; set; }
+    public bool? HasTransponder { get; set; }
+    public DateTime? Transponder_Exp_Date { get; set; }
+    public bool? IsExpired { get; set; }
+    public bool? HasDrivingLicense { get; set; }
+}
+
 //DTO - Create
 //Input DTO
 //Beim Anlegen eines Users ist eigentlich nur die Mail erforderlich, der Name dabei optional

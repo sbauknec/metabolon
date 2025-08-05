@@ -7,14 +7,14 @@ Tech-Stack > MsSQL Datenbank + Asp.NET Core Systemkern [C#]<br>
 RESTful API Design mit Schnittstellen für CRUD Operationen<br>
 
 Core-Features:<br>
-<1> Users<br>
-<1.1> Auth<br>
-<1.1.1> Admins können Nutzer anlegen via E-mail<br>
-<1.1.2> Nutzer können via E-mail Token ein Passwort setzen oder generieren lassen<br>
-<1.1.3> Nutzer können sich via E-mail und Passwort einloggen<br>
+<1> Users<br> 
+<1.1> Auth<br>                                                                                                              x
+<1.1.1> Admins können Nutzer anlegen via E-mail<br>                                                                         x [tested]
+<1.1.2> Nutzer können via E-mail Token ein Passwort setzen<br>                                                              x [tested] (except password)
+<1.1.3> Nutzer können sich via E-mail und Passwort einloggen<br>                                                            x 
 <1.2> Verwaltung<br>
-<1.2.1> Admins können Nutzern eine(n) Mentor/Aufsichtsperson zuweisen<br>
-<1.2.2> Admins können Nutzern eine Rolle/Rechte zuweisen<br>
+<1.2.1> Admins können Nutzern eine(n) Mentor/Aufsichtsperson zuweisen<br>                                                   x 
+<1.2.2> Admins können Nutzern eine Rolle/Rechte zuweisen<br>                                                                
 <1.2.3> Admins können Nutzern einen Transponder zuweisen sowie das Enddatum des Selben setzen<br>
 <1.2.4> Admins können Nutzern die Flag "HatFührerschein" zuweisen<br>
 <1.2.5> Sowohl Admins als auch Nutzer können Nutzern Ansichtsnamen zuweisen<br>

@@ -12,7 +12,7 @@ using metabolon.Models;
 [ApiController]
 
 //TODO: Update Item Create DTO
-public class ItemController(AppDbContext context, IMapper mapper) : GenericControllerBase<Item, ItemDTO, ItemDTO>(context, mapper)
+public class ItemController(AppDbContext context, IMapper mapper) : GenericControllerBase<Item, ItemDTO, ItemDTO, ItemDTO>(context, mapper)
 {
     protected override DbSet<Item> GetDbSet() => _context.Items;
 }

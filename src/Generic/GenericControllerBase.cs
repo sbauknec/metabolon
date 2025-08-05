@@ -5,6 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using metabolon.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 // Generische Controller Basisklasse
 //Implementiert 'virtual' Methoden für alle Basisfunktionen der CRUD Operationen [GET, POST, PUT, DELETE]
@@ -12,7 +13,7 @@ using metabolon.Models;
 //Virtual in den einzelnen Methoden bedeutet, dass die Controller die Möglichkeit haben diese Basisfunktionen vollständig zu überschreiben, aber nicht dazu verpflichtet sind
 //Im Fall, dass sie überschreiben wird ihre Logik für die Methoden benutzt, und die in dieser Klasse ignoriert. Falls sie das nicht tun, wird diese Logik als Default verwendet
 //Hier existiert nur der extremste Basisfall, bspw. die Create() Methode checkt nur, ob das Objekt ordentlich erstellt wurde und schiebt es dann in die Datenbank
-public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO> : ControllerBase
+public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> : ControllerBase
     where TEntity : class, IEntity
     where TDTO : class
 {
@@ -67,6 +68,7 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO> : Control
     {
         //TODO: apply middleware for checking Session Token
 
+        Console.WriteLine("Not in Override");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = _mapper.Map<TEntity>(dto);
@@ -78,7 +80,7 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO> : Control
 
     // Generische PUT Methode mit ID und Body Input
     [HttpPut("{id}")]
-    public virtual async Task<ActionResult<TDTO>> Update([FromBody] TDTO dto, int id)
+    public virtual async Task<ActionResult<TDTO>> Update([FromBody] TPutDTO dto, int id)
     {
         var db_model = await GetDbSet().FirstOrDefaultAsync(o => o.Id == id);
         if (db_model == null) return NotFound();
