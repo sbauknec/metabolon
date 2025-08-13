@@ -16,5 +16,20 @@ public class AppDbContext : DbContext
     public DbSet<Device> Devices { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Document> Documents { get; set; }
+    public DbSet<documents_devices> Documents_Devices { get; set; }
+    public DbSet<documents_rooms> Documents_Rooms { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+        modelBuilder.Entity<Room>().HasQueryFilter(r => !r.IsDeleted);
+        modelBuilder.Entity<Device>().HasQueryFilter(d => !d.IsDeleted);
+        modelBuilder.Entity<Item>().HasQueryFilter(i => !i.IsDeleted);
+        modelBuilder.Entity<Document>().HasQueryFilter(dc => !dc.IsDeleted);
+        modelBuilder.Entity<documents_devices>().HasQueryFilter(dd => !dd.IsDeleted);
+        modelBuilder.Entity<documents_rooms>().HasQueryFilter(dr => !dr.IsDeleted);
+    }
     
 }

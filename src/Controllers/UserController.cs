@@ -50,6 +50,10 @@ public class UserController(AppDbContext context, IMapper mapper) : GenericContr
         else return Unauthorized("Invalid Password");
     }
 
+    //Passwort update Methode
+    //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
+    //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt
+    //3. Das Passwort aus dem Record wird mit dem neuen Passwort überschrieben
     [HttpPost("password")]
     public async Task<ActionResult> SetPassword([FromBody] UserAuthDTO user)
     {

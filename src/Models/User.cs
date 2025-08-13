@@ -20,6 +20,8 @@ public class User : IEntity
     //Verifikation
     public string? verificationToken { get; set; }
     public bool IsVerified { get; set; } = false;
+    public bool? IsDeleted { get; set; } = false;
+    public DateOnly? DeletedOn { get; set; }
 
     //TODO: Figure out Permissions
 }

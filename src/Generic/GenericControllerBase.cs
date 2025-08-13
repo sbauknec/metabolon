@@ -79,6 +79,12 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
     }
 
     // Generische PUT Methode mit ID und Body Input
+    //Checkt die Formate und Datentypen aller Attribute und überschreibt vorhandene Felder in der Datenbank
+    //0. Check den mitgegebenen Token der Session des Nutzers, um zu prüfen ob und auf was er Zugriff hat
+    //1. Das DTO kommt vom Body der HTTPRequest rein, und es wird überprüft, dass alle Attribute vom korrekten Datentyp und im korrekten Format vorhanden sind
+    //2. Lies den Record unter "id" aus der Datenbank
+    //3. Checke das DTO ab, welche Attributfelder mit Werten reingekommen sind und überschreibe diese im Record
+    //4. Die Veränderungen werden in die Datenbank gespeichert und das neue Model wird an den Client zurückgeschickt
     [HttpPut("{id}")]
     public virtual async Task<ActionResult<TDTO>> Update([FromBody] TPutDTO dto, int id)
     {
@@ -86,18 +92,42 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
         if (db_model == null) return NotFound();
 
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        _context.Entry(db_model).CurrentValues.SetValues(dto);
+        //_context.Entry(db_model).CurrentValues.SetValues(dto);
+        foreach (var attribute in typeof(TPutDTO).GetProperties())
+        {
+            var inputValue = attribute.GetValue(dto);
+            if (inputValue != null)
+            {
+                var modelProperty = typeof(TEntity).GetProperty(attribute.Name);
+                if (modelProperty != null) modelProperty.SetValue(db_model, inputValue);
+            }
+        }
+
         await _context.SaveChangesAsync();
 
         return Ok(_mapper.Map<TDTO>(db_model));
     }
 
+    // Generische DELETE Methode mit ID
+    //Checkt ob der Record existiert und entfernt ihn aus der Datenbank
+    //TODO: Archivieren, nicht löschen
+    //0. Check den mitgegebenen Token der Session des Nutzers, um zu prüfen ob und auf was er Zugriff hat
+    //1. Finde den Record unter "id" in der Datenbank
+    //2. Falls vorhanden, lösche den Record aus der Datenbank
     [HttpDelete("{id}")]
     public virtual async Task<ActionResult> Delete(int id)
     {
         var db_model = await GetDbSet().FirstOrDefaultAsync(o => o.Id == id);
         if (db_model == null) return NotFound();
-        else return Ok(GetDbSet().Remove(db_model));
+        //else return Ok(GetDbSet().Remove(db_model));
+        else
+        {
+            db_model.IsDeleted = true;
+            db_model.DeletedOn = DateOnly.FromDateTime(DateTime.UtcNow);
+            await _context.SaveChangesAsync();
+
+            return Ok("Removed");
+        }
     }
 
     protected abstract DbSet<TEntity> GetDbSet();

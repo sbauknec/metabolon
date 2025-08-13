@@ -12,4 +12,8 @@ public class Document : IEntity
     public int Supervisor_Id { get; set; }
     public DateTime ApprovedAt { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    
+    //Archivierung statt Löschen
+    public bool IsDeleted { get; set; } = false;
+    public DateOnly? DeletedOn { get; set; }
 }
