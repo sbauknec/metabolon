@@ -14,6 +14,8 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 //Setup, Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
 var app = builder.Build();
 
 //Konfiguration, Dev Logger und so weiter, auch Ports

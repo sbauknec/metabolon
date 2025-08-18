@@ -21,7 +21,7 @@ public class User : IEntity
     public string? verificationToken { get; set; }
     public bool IsVerified { get; set; } = false;
 
-
+    //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;
     public DateOnly? DeletedOn { get; set; }
 
