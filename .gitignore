@@ -1,0 +1,10 @@
+# Ignore build artifacts
+**/bin/
+**/obj/
+
+# NuGet package cache
+.nuget/
+**/packages/
+
+# Ignore DB Migrations
+**/Migrations/
