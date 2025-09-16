@@ -18,6 +18,7 @@ public class AppDbContext : DbContext
     public DbSet<Document> Documents { get; set; }
     public DbSet<documents_devices> Documents_Devices { get; set; }
     public DbSet<documents_rooms> Documents_Rooms { get; set; }
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

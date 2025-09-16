@@ -24,6 +24,6 @@ public class User : IEntity
     //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;
     public DateOnly? DeletedOn { get; set; }
-
+    
     //TODO: Figure out Permissions
 }

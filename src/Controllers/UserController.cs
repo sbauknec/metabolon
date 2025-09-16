@@ -4,6 +4,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 using metabolon.DTOs;
 using metabolon.Generic;
@@ -31,13 +32,14 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     private PasswordHasher<User> hasher = new PasswordHasher<User>();
     //JwtService für Session Tokens und Identifikation
     private readonly IJwtService _jwtService = jwtService;
-    
+
 
     //Login Methode
     //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
     //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt
     //3. Es wird mit dem PasswordHasher Modul überprüft, ob die Passwörter übereinstimmt (Sowohl das einkommende Passwort als auch das gespeicherte liegt nur in Hash-Form vor)
     //4. Der vollständiger User-Record wird als DTO an den Client zurückgeschickt
+    [AllowAnonymous]
     [HttpPost("login")]
     public async Task<ActionResult<UserDTO>> Login([FromBody] UserAuthDTO user)
     {
@@ -115,6 +117,7 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     //2. Aus der DB wird ein Record gesucht, in dem dieser Token existiert
     //3. IsVerified wird umgesetzt, was Webzugriff gewährt, der Token wird aus dem Record gelöscht
     //4. Es geht ein einfaches 200 - OK zurück, ohne Inhalt => Auf der Client Seite wird hier weitergeleitet zum Passwort setzen
+    [AllowAnonymous]
     [HttpGet("verify")]
     public async Task<ActionResult> VerifyUser(string token)
     {

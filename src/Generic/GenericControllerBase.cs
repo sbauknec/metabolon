@@ -5,7 +5,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using metabolon.Models;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.AspNetCore.Authorization;
 
 // Generische Controller Basisklasse
 //Implementiert 'virtual' Methoden für alle Basisfunktionen der CRUD Operationen [GET, POST, PUT, DELETE]
@@ -13,6 +13,8 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 //Virtual in den einzelnen Methoden bedeutet, dass die Controller die Möglichkeit haben diese Basisfunktionen vollständig zu überschreiben, aber nicht dazu verpflichtet sind
 //Im Fall, dass sie überschreiben wird ihre Logik für die Methoden benutzt, und die in dieser Klasse ignoriert. Falls sie das nicht tun, wird diese Logik als Default verwendet
 //Hier existiert nur der extremste Basisfall, bspw. die Create() Methode checkt nur, ob das Objekt ordentlich erstellt wurde und schiebt es dann in die Datenbank
+
+[Authorize]
 public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> : ControllerBase
     where TEntity : class, IEntity
     where TDTO : class
@@ -25,7 +27,6 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
         _context = context;
         _mapper = mapper;
     }
-
 
     // Generische GET Methode
     //Liest die Objekte aus der angefragten TEntity Model-Tabelle aus der Datenbank, formt sie zu DTOs und wirft sie vollständig aus

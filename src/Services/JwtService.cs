@@ -42,7 +42,8 @@ public class JwtService : IJwtService {
     }
 }
 
-public class AuthToken {
+public class AuthToken
+{
     public string Token { get; set; } = string.Empty;
     public DateTime Expires { get; set; }
 }
