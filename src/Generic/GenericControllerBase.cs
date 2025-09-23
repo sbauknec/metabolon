@@ -111,7 +111,6 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
 
     // Generische DELETE Methode mit ID
     //Checkt ob der Record existiert und entfernt ihn aus der Datenbank
-    //TODO: Archivieren, nicht löschen
     //0. Check den mitgegebenen Token der Session des Nutzers, um zu prüfen ob und auf was er Zugriff hat
     //1. Finde den Record unter "id" in der Datenbank
     //2. Falls vorhanden, lösche den Record aus der Datenbank

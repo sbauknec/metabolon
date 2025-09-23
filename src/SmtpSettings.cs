@@ -1,3 +1,6 @@
+//Carrier Klasse für SmtpSettings
+//Kommt aus den appsettings.json
+//Wird in Program.cs beschrieben
 public class SmtpSettings
 {
     public string Host { get; set; } = "";

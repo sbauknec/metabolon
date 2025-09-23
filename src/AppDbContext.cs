@@ -20,6 +20,10 @@ public class AppDbContext : DbContext
     public DbSet<documents_rooms> Documents_Rooms { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    //Middleware-Funktion die immer dann ausgeführt wird wenn eine Record aus der Datenbank ins System geht, egal zu welchem Zweck
+    //Hier wird gefiltert, um die "Soft-Deletion" zu verwirklichen:
+    //Wenn eine Record "Deletet" wird, wird stattdessen eine Flag "IsDeleted" gesetzt, quasi "archiviert"
+    //Wenn eine Liste gerufen wird, die nicht explizit das "Archiv" aufruft, wird hier diese Liste gefiltert, und alle Records mit "IsDeleted" auf true werden vor übergabe verworfen, sprich werden in Listenansicht nicht angezeigt
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

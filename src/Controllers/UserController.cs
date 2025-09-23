@@ -21,7 +21,7 @@ using metabolon.Services;
 //Überschreibt die POST methode mit der Registrierungslogik -> Die Registrierung erfolgt über E-Mail und schickt einen Token an die Target Mail
 //Fügt eine '/verify' Route hinzu, mit der die Verifikation erfolgt, indem der eingehende Token geprüft wird
 
-public class UserController(AppDbContext context, IMapper mapper, IJwtService jwtService) : GenericControllerBase<User, UserDTO, UserCreateDTO, UserPutDTO>(context, mapper)
+public class UserController(AppDbContext context, IMapper mapper, IJwtService jwtService, IEmailService emailService) : GenericControllerBase<User, UserDTO, UserCreateDTO, UserPutDTO>(context, mapper)
 {
     //Helfermethode für die GenericControllerBase Logik
     protected override DbSet<User> GetDbSet() => _context.Users;
@@ -32,6 +32,8 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     private PasswordHasher<User> hasher = new PasswordHasher<User>();
     //JwtService für Session Tokens und Identifikation
     private readonly IJwtService _jwtService = jwtService;
+    //EmailService für Email Prozesse
+    private readonly IEmailService _emailService = emailService;
 
 
     //Login Methode
@@ -96,14 +98,19 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     public async override Task<ActionResult<UserDTO>> Create([FromBody] UserCreateDTO user)
     {
         
-        Console.WriteLine("In Override!");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = _mapper.Map<User>(user);
         //TODO: Add Default value assignment if applicable here
 
         model.verificationToken = GenerateVerificationToken();
-        //TODO: Add Email sending logic
+
+        var _values = new Dictionary<String, String>();
+        _values.Add("name", model.Name!);
+        _values.Add("token", model.verificationToken);
+        _values.Add("toEmail", model.Mail);
+
+        await _emailService.SendMailAsync(0, _values);
 
         _context.Users.Add(model);
         await _context.SaveChangesAsync();

@@ -38,11 +38,13 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(buil
 //Setup, Mapper
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
+//Settings, interne Werte die vom System benutzt werden
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
 
 //Jwt Session Tokens
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IEmailService, EMailService>();
 
 var app = builder.Build();
 
