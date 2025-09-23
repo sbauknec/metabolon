@@ -53,7 +53,6 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         //TODO: Hashing Logic
 
         if (entry == null) return NotFound();
-        //else if (hasher.VerifyHashedPassword(entry, entry.Password, user.Password) == PasswordVerificationResult.Success) return Ok(_mapper.Map<UserDTO>(entry));
         else if (hasher.VerifyHashedPassword(entry, entry.Password!, user.Password) == PasswordVerificationResult.Success)
         {
             var token = _jwtService.GenerateToken(entry);
@@ -97,7 +96,7 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     [HttpPost]
     public async override Task<ActionResult<UserDTO>> Create([FromBody] UserCreateDTO user)
     {
-        
+
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = _mapper.Map<User>(user);

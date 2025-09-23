@@ -36,8 +36,6 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
     [HttpGet]
     public virtual async Task<ActionResult<IEnumerable<TDTO>>> GetAll()
     {
-        //TODO: apply middleware for checking Session Token
-
         var listOfEntities = await GetDbSet().ToListAsync();
         return Ok(_mapper.Map<List<TDTO>>(listOfEntities));
     }
@@ -49,13 +47,25 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
     //2. Falls das Objekt / die ID in der Datenbank nicht existiert, schmeiß einen 404 Not Found error an den Client zurück
     //3. Falls es existiert, schick das Objekt an den Client zurück
     [HttpGet("{id}")]
-    public virtual async Task<ActionResult<TEntity>> GetById(int id)
+    public virtual async Task<ActionResult<TDTO>> GetById(int id)
     {
-        //TODO: apply middleware for checking Session Token
-
         var entity = await GetDbSet().FirstOrDefaultAsync(o => o.Id == id);
         if (entity == null) return NotFound();
         else return Ok(_mapper.Map<TDTO>(entity));
+    }
+
+    //Generische GET Methode für Archiv
+    //Liest die Objecte aus der angefragten TEntity Model-Tebelle aus der Datenbank und filtert für Objekte die "gelöscht" wurden
+    //0. Check den mitgegebenen Token der Session des Nutzers, um zu prüfen ob und auf was er Zugriff hat
+    //1. Nimm die gesamte Lister aller Einträge aus dem mitgegebenen Datenbankset aus, gefiltert auf IsDeleted = true
+    //2. Mappt die Liste vom TEntity Typ Objekten auf TDTO Typ Objekten (Ausgabeoptimiert) um und schickt sie an den Client zurück
+    [HttpGet("archive")]
+    public virtual async Task<ActionResult<IEnumerable<TDTO>>> GetArchive() {
+        var listOfEntities = await GetDbSet()
+                            .IgnoreQueryFilters()
+                            .Where(e => e.IsDeleted)
+                            .ToListAsync();
+        return Ok(_mapper.Map<List<TDTO>>(listOfEntities));
     }
 
     // Generische POST Methode mit Body Input
@@ -67,9 +77,6 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
     [HttpPost]
     public virtual async Task<ActionResult<TDTO>> Create([FromBody] TCreateDTO dto)
     {
-        //TODO: apply middleware for checking Session Token
-
-        Console.WriteLine("Not in Override");
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
         var model = _mapper.Map<TEntity>(dto);
