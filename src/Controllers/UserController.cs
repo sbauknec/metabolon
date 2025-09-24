@@ -104,10 +104,12 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
 
         model.verificationToken = GenerateVerificationToken();
 
-        var _values = new Dictionary<String, String>();
-        _values.Add("name", model.Name!);
-        _values.Add("token", model.verificationToken);
-        _values.Add("toEmail", model.Mail);
+        var _values = new Dictionary<String, String>
+        {
+            { "name", model.Name! },
+            { "token", model.verificationToken },
+            { "toEmail", model.Mail }
+        };
 
         await _emailService.SendMailAsync(0, _values);
 

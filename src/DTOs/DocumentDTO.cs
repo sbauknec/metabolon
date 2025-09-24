@@ -3,6 +3,8 @@ namespace metabolon.DTOs;
 using System.ComponentModel.DataAnnotations;
 using metabolon.Models;
 
+//TODO: REWORK THIS TO CONFORM TO UPLOAD WORKFLOW
+
 //DTO - Exposure
 //Die Felder in dieser Datei werden an den Nutzer zurückgeschickt
 //Omit ALLE sensitiven bzw. zwecklosen Felder
@@ -11,10 +13,8 @@ using metabolon.Models;
 public class DocumentDTO
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public required string OriginalName { get; set; }
     public UserQueryDTO? Author { get; set; }
-    [MinLength(1)]
-    public required string Object_Reference { get; set; }
     public bool? IsApproved { get; set; }
     public UserQueryDTO? Supervisor { get; set; }
     public DateTime? ApprovedAt { get; set; }
@@ -26,9 +26,8 @@ public class DocumentDTO
 public class DocumentQueryDTO
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public required string OriginalName { get; set; }
     public int Author_Id { get; set; }
-    public required string Object_Reference { get; set; }
     public bool? IsApproved { get; set; }
     public int Supervisor_Id { get; set; }
     public DateTime? ApprovedAt { get; set; }
@@ -39,7 +38,6 @@ public class DocumentQueryDTO
 //Zum Erstellen ist nur ein Name erforderlich, die anderen Felder sind eher optional
 public class DocumentCreateDTO
 {
-    public required string Name { get; set; }
-    public required string Object_Reference { get; set; }
+    public string? OriginalName { get; set; } = "";
     public bool? IsApproved { get; set; }
 }
