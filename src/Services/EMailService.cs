@@ -28,6 +28,7 @@ public class EMailService : IEmailService
     //Mail Sendungsprozess
     //Exakte Formweise, sowie Templateauswahl ist abhängig vom Zweck der Mail
     //Purpose = 0: Verifikationsmail, Dictionary enthält die keys name, token, toEmail
+    //Purpose = 1: Dokumentmail, Dictionary enthält die keys name, requestingName, documentId, toEmail
     public async Task SendMailAsync(int purpose, Dictionary<string, string> values)
     {
         //Bau eine MimeMessage und schreibe zunächst nur Adressen von Sender und Empfänger
@@ -48,6 +49,13 @@ public class EMailService : IEmailService
                     .Replace("{{verificationLink}}", tokenLink);
 
                 message.Subject = ":metabolon E-Mail Verifikation erforderlich";
+                break;
+            case 1:
+                var docLink = Path.Combine(_settings.BaseUrl!, values["documentId"]);
+                html = ReadTemplate("DocumentRequestMail")
+                        .Replace("{{name}}", values["name"])
+                        .Replace("{{requestingName}}", values["requestingName"])
+                        .Replace("{{link}}", docLink);
                 break;
             default:    //Keiner der aufgelisteten Werte trifft zu
                 return;

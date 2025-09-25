@@ -12,10 +12,11 @@ using metabolon.Models;
 [ApiController]
 
 //TODO: Update Document Create DTO
-public class DocumentController(AppDbContext context, IMapper mapper, AppSettings settings) : GenericControllerBase<Document, DocumentDTO, DocumentCreateDTO, DocumentDTO>(context, mapper)
+public class DocumentController(AppDbContext context, IMapper mapper, AppSettings settings, IEmailService emailService) : GenericControllerBase<Document, DocumentDTO, DocumentCreateDTO, DocumentDTO>(context, mapper)
 {
 
     private readonly AppSettings _settings = settings;
+    private readonly IEmailService _emailService = emailService;
 
     [HttpGet("download/{id}")]
     public async Task<IActionResult> Download(int id)
@@ -59,13 +60,26 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
         model.StorageName = InternalStorageName;
         model.FilePath = path;
 
-        model.Supervisor_Id = await _context.Users
-                                .Where(u => u.Id == int.Parse(userId))
-                                .Select(u => u.Supervisor_Id)
-                                .FirstOrDefaultAsync();
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
+        if (user == null) return NotFound($"User under {userId} does not exist");
+
+        var supervisor = await _context.Users.FirstOrDefaultAsync(u => u.Id == user.Supervisor_Id);
+        if (supervisor == null) return NotFound($"User under {user.Supervisor_Id} does not exist");
+
+        model.Supervisor_Id = supervisor.Id;
 
         _context.Documents.Add(model);
         await _context.SaveChangesAsync();
+
+        var values = new Dictionary<String, String>
+        {
+            { "name", supervisor.Name! },
+            { "requestingName", user.Name! },
+            { "documentId", model.Id.ToString() },
+            { "toEmail", supervisor.Mail }
+        };
+
+        await _emailService.SendMailAsync(1, values);
 
         return CreatedAtAction(nameof(GetById), new { id = model.Id }, _mapper.Map<DocumentDTO>(model));
     }
