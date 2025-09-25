@@ -35,5 +35,6 @@ public class DeviceCreateDTO
 {
     public required string Name { get; set; }
     public DateTime? Maintenance_Date { get; set; }
+    public bool? IsMaintained { get; set; } = false;
     public string? Location { get; set; }
 }
