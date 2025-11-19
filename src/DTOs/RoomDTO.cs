@@ -18,8 +18,7 @@ public class RoomDTO
     public List<UserQueryDTO>? Present_Users { get; set; }
     public List<DeviceQueryDTO>? Devices { get; set; }
     public List<ItemQueryDTO>? Materials { get; set; }
-
-    //TODO: Machines, Material, Documents, loading / JOIN
+    public List<DocumentQueryDTO>? Documents { get; set; }
 }
 
 //DTO - Query

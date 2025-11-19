@@ -7,8 +7,12 @@ public class Room : IEntity
 {
     public int Id { get; set; }
     public required string Name { get; set; }
-    public int Supervisor_Id { get; set; }
+    public int? Supervisor_Id { get; set; }
+    public User? Supervisor { get; set; }
     
+    //Verknüpfung Dokumente
+    public ICollection<documents_rooms>? RoomDocuments { get; set; }
+
     //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;
     public DateOnly? DeletedOn { get; set; }

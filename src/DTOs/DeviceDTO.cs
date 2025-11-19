@@ -15,7 +15,8 @@ public class DeviceDTO
     public bool? IsMaintained { get; set; }
     public string? Location { get; set; }
 
-    //TODO: Figure out Documents JOIN
+    //Dokumente
+    public List<DocumentQueryDTO>? Documents { get; set; }
 }
 
 //DTO - Query

@@ -25,14 +25,25 @@ public class MapperProfile : Profile
 
         CreateMap<Room, RoomDTO>();
         CreateMap<RoomDTO, Room>();
+        CreateMap<RoomCreateDTO, Room>();
+        CreateMap<Room, RoomQueryDTO>();
 
         CreateMap<Device, DeviceDTO>();
         CreateMap<DeviceDTO, Device>();
+        CreateMap<DeviceCreateDTO, Device>();
+        CreateMap<Device, DeviceQueryDTO>();
 
         CreateMap<Item, ItemDTO>();
         CreateMap<ItemDTO, Item>();
+        CreateMap<ItemCreateDTO, Item>();
+        CreateMap<Item, ItemQueryDTO>();
 
         CreateMap<Document, DocumentDTO>();
         CreateMap<DocumentDTO, Document>();
+        CreateMap<DocumentCreateDTO, Document>();
+        CreateMap<Document, DocumentQueryDTO>();
+
+        CreateMap<PermissionCreateDTO, Permission>();
+        CreateMap<Permission, PermissionDTO>();
     }
 }

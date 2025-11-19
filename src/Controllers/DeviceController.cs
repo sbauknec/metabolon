@@ -14,6 +14,25 @@ using metabolon.Models;
 public class DeviceController(AppDbContext context, IMapper mapper) : GenericControllerBase<Device, DeviceDTO, DeviceCreateDTO, DeviceDTO>(context, mapper)
 {
 
+    [HttpGet("{id}")]
+    public override async Task<ActionResult<DeviceDTO>> GetById(int id)
+    {
+        var device = await _context.Devices.FirstOrDefaultAsync(d => d.Id == id);
+        if (device == null) return NotFound($"Device under {id} does not exist");
+
+        var output = _mapper.Map<DeviceDTO>(device);
+
+        List<int> documentIds = await _context.Documents_Devices.Where(dd => dd.Device_Id == id).Select(dd => dd.Document_Id).ToListAsync();
+        if (documentIds.Count != 0) output.Documents = new List<DocumentQueryDTO>();
+        documentIds.ForEach(async Id =>
+        {
+            var doc = await _context.Documents.FirstOrDefaultAsync(doc => doc.Id == Id);
+            output.Documents!.Add(_mapper.Map<DocumentQueryDTO>(doc));
+        });
+
+        return Ok(output);
+    }
+
     [HttpPut("linkDocument/{id}")]
     public async Task<ActionResult> linkDocument(int id, int DocumentId)
     {

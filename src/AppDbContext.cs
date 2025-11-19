@@ -19,6 +19,7 @@ public class AppDbContext : DbContext
     public DbSet<documents_devices> Documents_Devices { get; set; }
     public DbSet<documents_rooms> Documents_Rooms { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
+    public DbSet<Permission> Permissions { get; set; }
 
     //Middleware-Funktion die immer dann ausgeführt wird wenn eine Record aus der Datenbank ins System geht, egal zu welchem Zweck
     //Hier wird gefiltert, um die "Soft-Deletion" zu verwirklichen:

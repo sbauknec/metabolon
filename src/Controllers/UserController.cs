@@ -72,6 +72,25 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         else return Unauthorized("Invalid Password");
     }
 
+    [HttpPost("giveAccess/{id}")]
+    public async Task<ActionResult<Permission>> GiveAccess(int id, [FromBody] PermissionCreateDTO permission){
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        if(permission.UserId == id){
+            var entry = await GetDbSet().FirstOrDefaultAsync(u => u.Id == id);
+            if(entry == null) return NotFound();
+
+            Permission p = _mapper.Map<Permission>(permission);
+            _context.Permissions.Add(p);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<PermissionDTO>(p));
+        }
+        else{
+            return Unauthorized("Mismatching Permission Id and Request Id");
+        }
+    }
+
     //Passwort update Methode
     //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
     //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt

@@ -85,7 +85,7 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
     }
 
 
-    [HttpPost("upload")]
+    [HttpPut("upload")]
     public async Task<ActionResult> Upload(IFormFile file, [FromBody] DocumentCreateDTO document)
     {
         if (file == null || file.Length == 0) return BadRequest("No file attached");
