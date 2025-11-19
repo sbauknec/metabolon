@@ -35,8 +35,8 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
         return File(bytes, contentType, Path.GetFileName(path));
     }
 
-    [HttpPost]
-    public async Task<ActionResult<DocumentDTO>> Create(IFormFile file, [FromBody] DocumentCreateDTO document)
+    [HttpPost("withFile")]
+    public async Task<ActionResult<DocumentDTO>> CreateFromFile(IFormFile file, [FromBody] DocumentCreateDTO document)
     {
         if (file == null || file.Length == 0) return BadRequest("No file attached");
 
@@ -85,7 +85,7 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
     }
 
 
-    [HttpPut("upload")]
+    [HttpPost("upload")]
     public async Task<ActionResult> Upload(IFormFile file, [FromBody] DocumentCreateDTO document)
     {
         if (file == null || file.Length == 0) return BadRequest("No file attached");

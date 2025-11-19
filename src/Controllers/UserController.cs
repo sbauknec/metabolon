@@ -138,6 +138,20 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         return CreatedAtAction(nameof(GetById), new { id = model.Id }, _mapper.Map<UserDTO>(model));
     }
 
+    [HttpPut("revokeAccess/{id}/{permId}")]
+    public async Task<ActionResult> RevokeAccess (int id, int permId){
+        var user = await GetDbSet().FirstOrDefaultAsync(u => u.Id == id);
+        if(user == null) return NotFound();
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.Id == permId);
+        if(user == null) return NotFound();
+
+        _context.Permissions.Remove(permission);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
     //Verify Methode, verifiziert die Email
     //0. Im POST wird eine Mail geschickt in der ein Link mit dem verificationToken enthalten ist
     //1. Der Token kommt als string rein
