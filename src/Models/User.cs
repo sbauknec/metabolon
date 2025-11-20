@@ -17,6 +17,8 @@ public class User : IEntity
     public bool IsExpired { get; set; } = false;
     public bool HasDrivingLicense { get; set; } = false;
 
+    public int? role { get; set; } = 0;
+
     //Verifikation
     public string? verificationToken { get; set; }
     public bool IsVerified { get; set; } = false;

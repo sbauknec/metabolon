@@ -40,7 +40,7 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
     {
         if (file == null || file.Length == 0) return BadRequest("No file attached");
 
-        var userId = User.FindFirst("Sub")?.Value;
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
         if (userId == null) return Unauthorized();
 
         var InternalStorageName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);

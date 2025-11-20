@@ -17,9 +17,24 @@ using metabolon.Models;
 public class RoomController(AppDbContext context, IMapper mapper) : GenericControllerBase<Room, RoomDTO, RoomCreateDTO, RoomCreateDTO>(context, mapper)
 {
 
+    [HttpGet]
+    public override async Task<ActionResult<IEnumerable<RoomDTO>>> GetAll(){
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
+        if(permission == 0) return Forbid("Not permitted to view this list");
+        else{
+            var rooms = GetDbSet().ToListAsync();
+            return Ok(_mapper.Map<RoomDTO>(rooms));
+        }        
+    }
+
     [HttpGet("{id}")]
     public override async Task<ActionResult<RoomDTO>> GetById(int id)
     {
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
+        if(!permission) return Forbid("No Access Permission");
+
         //var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
         //if (room == null) return NotFound($"Room under {id} does not exist");
 
@@ -75,9 +90,49 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
         return Ok(_mapper.Map<RoomDTO>(outputDTO));
     }
 
+    [HttpPost]
+    public async override Task<ActionResult<RoomDTO>> Create([FromBody] RoomCreateDTO dto){
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
+        if(permission == 0) return Forbid("Not permitted to create object");
+        else{
+            var model = _mapper.Map<Room>(dto);
+            GetDbSet().Add(model);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(model);
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async override Task<ActionResult<RoomDTO>> Update([FromBody] RoomCreateDTO dto, int id){
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
+        if(!permission || !permission.Write?) return Forbid("Can't edit entity");
+        else{
+            var db_model = await GetDbSet().FirstOrDefaultAsync(r => r.Id == id);
+            if(!db_model) return NotFound();
+
+            if(!ModelState.IsValid) return BadRequest(ModelState);
+
+            foreach(var attribute in RoomCreateDTO.GetProperties){
+                var inputValue = attribute.GetValue(dto);
+                if(!inputValue == null){
+                    var modelProperty = Room.GetProperty(attribute.Name);
+                    if (modelProperty != null) modelProperty.SetValue(db_model, inputValue);
+                }
+            }
+
+            return Ok(_mapper.Map<RoomDTO>(db_model));
+        }
+    }
+
     [HttpPut("linkDocument/{id}")]
     public async Task<ActionResult> linkDocument(int id, int DocumentId)
     {
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = _context.Permissions.FirstOrDefaultAsync(p =! p.UserId == userId && p.RoomId == id);
+        if(!permission || !permission.Write?) return Forbid("Can't edit entity");
+
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
         if (room == null) return NotFound($"Room under {id} does not exist");
 
@@ -92,6 +147,24 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
         await _context.SaveChangesAsync();
 
         return Ok();
+    }
+
+    [HttpDelete("{id}")]
+    public async override Task<ActionResult> Delete(int id){
+        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
+        if(permission == 0) return Forbid("Not permitted to create object");
+
+        var db_model = await GetDbSet().FirstOrDefaultAsync(r => r.Id == id);
+        if (db_model == null) return NotFound();
+        else
+        {
+            db_model.IsDeleted = true;
+            db_model.DeletedOn = DateOnly.FromDateTime(DateTime.UtcNow);
+            await _context.SaveChangesAsync();
+
+            return Ok("Removed");
+        }
     }
 
     protected override DbSet<Room> GetDbSet() => _context.Rooms;

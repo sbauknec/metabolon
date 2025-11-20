@@ -67,4 +67,5 @@ public class UserCreateDTO
     [MinLength(1)]
     public required string Mail { get; set; }
     public string? Name { get; set; }
+    public int? role { get; set; } = 0;
 }
