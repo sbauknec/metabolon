@@ -149,4 +149,35 @@ public class DocumentController(AppDbContext context, IMapper mapper, AppSetting
     }
 
     protected override DbSet<Document> GetDbSet() => _context.Documents;
+    protected override async Task<bool> HasReadPermission(Document d, int UserId){
+        var RD = await _context.documents_rooms.FirstOrDefaultAsync(rd => rd.documentId == d.Id);
+        var DD = await _context.documents_devices.FirstOrDefaultAsync(dd => dd.documentId == d.Id);
+        if(RD == null && DD == null) return BadRequest();
+
+        var roomId;
+        if(DD != null){
+            var device = await _context.Devices.FirstOrDefaultAsync(device => device.Id == DD.Device_Id);
+            roomId = device.roomId;
+        }
+        else roomId = RD.roomId;
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == roomId && p.UserId == UserId);
+        return permission != null;
+    }
+    protected override async Task<bool> HasWritePermission(Document d, int UserId){
+        var RD = await _context.documents_rooms.FirstOrDefaultAsync(rd => rd.documentId == d.Id);
+        var DD = await _context.documents_devices.FirstOrDefaultAsync(dd => dd.documentId == d.Id);
+        if(RD == null && DD == null) return BadRequest();
+
+        var roomId;
+        if(DD != null){
+            var device = await _context.Devices.FirstOrDefaultAsync(device => device.Id == DD.Device_Id);
+            roomId = device.roomId;
+        }
+        else roomId = RD.roomId;
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == roomId && p.UserId == UserId);
+        if(permission == null) return false;
+        else return permission.Write;
+    }
 }

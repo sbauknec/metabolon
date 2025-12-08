@@ -14,9 +14,11 @@ public class DeviceDTO
     public DateTime? Maintenance_Date { get; set; }
     public bool? IsMaintained { get; set; }
     public string? Location { get; set; }
+    public int? RoomId { get; set; }
 
     //Dokumente
     public List<DocumentQueryDTO>? Documents { get; set; }
+    public Room? Room { get; set; }
 }
 
 //DTO - Query
@@ -27,6 +29,7 @@ public class DeviceQueryDTO
     public int Id { get; set; }
     public required string Name { get; set; }
     public string? Location { get; set; }
+    public int? RoomId { get; set; }
 }
 
 //DTO - Create
@@ -38,4 +41,5 @@ public class DeviceCreateDTO
     public DateTime? Maintenance_Date { get; set; }
     public bool? IsMaintained { get; set; } = false;
     public string? Location { get; set; }
+    public int? RoomId { get; set; }
 }

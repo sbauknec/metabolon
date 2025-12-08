@@ -138,4 +138,6 @@ public abstract class GenericControllerBase<TEntity, TDTO, TCreateDTO, TPutDTO> 
     }
 
     protected abstract DbSet<TEntity> GetDbSet();
+    protected abstract async Task<bool> HasReadPermission(TEntity e, int UserId);
+    protected abstract async Task<bool> HasWritePermission(TEntity e, int UserId);
 }

@@ -12,6 +12,8 @@ public class Room : IEntity
     
     //Verknüpfung Dokumente
     public ICollection<documents_rooms>? RoomDocuments { get; set; }
+    public ICollection<Device> Devices { get; set; }
+    public ICollection<Item> Items { get; set; }
 
     //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;

@@ -171,4 +171,13 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         await _context.SaveChangesAsync();
         return Ok();
     }
+
+
+    // Rework this stuff with ADMIN only permissions, however the fuck that's supposed to work
+    protected override async Task<bool> HasReadPermission(User u, int UserId){
+        return true;
+    }
+    protected override async Task<bool> HasWritePermission(User u, int UserId){
+        return true;
+    }
 }

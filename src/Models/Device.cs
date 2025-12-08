@@ -9,11 +9,10 @@ public class Device : IEntity
     public DateTime Maintenance_Date { get; set; } = DateTime.UtcNow;
     public bool IsMaintained { get; set; } = false;
     public string? Location { get; set; } = "";
-    public int Room_Id { get; set; }
+    public int? RoomId { get; set; }
 
     //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;
     public DateOnly? DeletedOn { get; set; }
 
-    //TODO: Figure out Documents JOIN
 }

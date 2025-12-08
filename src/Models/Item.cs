@@ -9,7 +9,7 @@ public class Item : IEntity
     public int Amount { get; set; } = 0;
     public string? Location { get; set; } = "";
     public string? Article_Nr { get; set; } = "";
-    public int Room_Id { get; set; }
+    public int? RoomId { get; set; }
     
     //Archivierung statt Löschen
     public bool IsDeleted { get; set; } = false;

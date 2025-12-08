@@ -17,6 +17,7 @@ public class ItemDTO
     public string? Location { get; set; }
     [MinLength(1)]
     public string? Article_Nr { get; set; }
+    public int? RoomId { get; set; }
 }
 
 //DTO - Query
@@ -28,6 +29,7 @@ public class ItemQueryDTO
     public required string Name { get; set; }
     public int Amount { get; set; }
     public string? Location { get; set; }
+    public int? RoomId { get; set; }
 }
 
 //DTO - Create
@@ -42,4 +44,5 @@ public class ItemCreateDTO
     public string? Location { get; set; }
     [MinLength(1)]
     public string? Article_Nr { get; set; }
+    public int? RoomId { get; set; }
 }

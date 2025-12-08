@@ -130,7 +130,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
     public async Task<ActionResult> linkDocument(int id, int DocumentId)
     {
         var userId = int.Parse(User.FindFirst("Sub")!.Value);
-        var permission = _context.Permissions.FirstOrDefaultAsync(p =! p.UserId == userId && p.RoomId == id);
+        var permission = _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
         if(!permission || !permission.Write?) return Forbid("Can't edit entity");
 
         var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
@@ -168,4 +168,13 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
     }
 
     protected override DbSet<Room> GetDbSet() => _context.Rooms;
+    protected override async Task<bool> HasReadPermission(Room r, int UserId){
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == r.Id && p.UserId == UserId);
+        return permission != null;
+    }
+    protected override async Task<bool> HasWritePermission(Room r, int UserId){
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == r.Id && p.UserId == UserId);
+        if(permission == null) return false;
+        else return permission.Write;
+    }
 }

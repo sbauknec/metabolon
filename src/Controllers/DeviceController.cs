@@ -53,4 +53,19 @@ public class DeviceController(AppDbContext context, IMapper mapper) : GenericCon
     }
 
     protected override DbSet<Device> GetDbSet() => _context.Devices;
+    protected override async Task<bool> HasReadPermission(Device d, int UserId){
+        var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == d.RoomId);
+        if(room == null) return NotFound();
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == room.Id && p.UserId == UserId);
+        return permission != null;
+    }
+    protected override async Task<bool> HasWritePermission(Device d, int UserId){
+        var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == d.RoomId);
+        if(room == null) return NotFound();
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.RoomId == room.Id && p.UserId == UserId);
+        if(permission == null) return false;
+        else return permission.Write;
+    }
 }
