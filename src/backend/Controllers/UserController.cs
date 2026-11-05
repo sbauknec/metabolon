@@ -1,0 +1,185 @@
+namespace metabolon.Controllers;
+
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
+
+using metabolon.DTOs;
+using metabolon.Generic;
+using metabolon.Models;
+using metabolon.Services;
+
+[Route("api/[Controller]")]
+[ApiController]
+
+// Controller Interface für User
+//Endpunkt für alle '/user' Anfragen auf die API
+//Implementiert die Basis methoden aus GenericControllerBase.cs -> Basis für GET, PUT, DELETE
+//Fügt eine '/login' Route hinzu, mit der die Nutzer sich einloggen
+//Überschreibt die POST methode mit der Registrierungslogik -> Die Registrierung erfolgt über E-Mail und schickt einen Token an die Target Mail
+//Fügt eine '/verify' Route hinzu, mit der die Verifikation erfolgt, indem der eingehende Token geprüft wird
+
+public class UserController(AppDbContext context, IMapper mapper, IJwtService jwtService, IEmailService emailService) : GenericControllerBase<User, UserDTO, UserCreateDTO, UserPutDTO>(context, mapper)
+{
+    //Helfermethode für die GenericControllerBase Logik
+    protected override DbSet<User> GetDbSet() => _context.Users;
+    //Simple Generierung für den Verifikations-Token, für die Registrierung
+    private string GenerateVerificationToken() => Guid.NewGuid().ToString() + Guid.NewGuid().ToString();
+
+    //Hasher für Passwort und Auth management
+    private PasswordHasher<User> hasher = new PasswordHasher<User>();
+    //JwtService für Session Tokens und Identifikation
+    private readonly IJwtService _jwtService = jwtService;
+    //EmailService für Email Prozesse
+    private readonly IEmailService _emailService = emailService;
+
+
+    // Login Methode
+    //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
+    //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt
+    //3. Es wird mit dem PasswordHasher Modul überprüft, ob die Passwörter übereinstimmt (Sowohl das einkommende Passwort als auch das gespeicherte liegt nur in Hash-Form vor)
+    //4. Der vollständiger User-Record wird als DTO an den Client zurückgeschickt
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<ActionResult<UserDTO>> Login([FromBody] UserAuthDTO user)
+    {
+        //TODO: Token logic to determine login / password update
+
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var entry = await _context.Users.FirstOrDefaultAsync(u => u.Mail == user.Mail);
+
+        //TODO: Hashing Logic
+
+        if (entry == null) return NotFound();
+        else if (hasher.VerifyHashedPassword(entry, entry.Password!, user.Password) == PasswordVerificationResult.Success)
+        {
+            var token = _jwtService.GenerateToken(entry);
+
+            //TODO: Refresh tokens
+
+            Response.Cookies.Append("jwt", token.Token, new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Strict,
+                Expires = token.Expires
+            });
+
+            return Ok(new { message = "Login Successful" });
+        }
+        else return Unauthorized("Invalid Password");
+    }
+
+    // Zugriffgewährungs Methode mit ID
+    //1. 
+    [HttpPost("giveAccess/{id}")]
+    public async Task<ActionResult<Permission>> GiveAccess(int id, [FromBody] PermissionCreateDTO permission){
+        if(!ModelState.IsValid) return BadRequest(ModelState);
+
+        if(permission.UserId == id){
+            var entry = await GetDbSet().FirstOrDefaultAsync(u => u.Id == id);
+            if(entry == null) return NotFound();
+
+            Permission p = _mapper.Map<Permission>(permission);
+            _context.Permissions.Add(p);
+            await _context.SaveChangesAsync();
+
+            return Ok(_mapper.Map<PermissionDTO>(p));
+        }
+        else{
+            return Unauthorized("Mismatching Permission Id and Request Id");
+        }
+    }
+
+    // Passwort update Methode
+    //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
+    //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt
+    //3. Das Passwort aus dem Record wird mit dem neuen Passwort überschrieben
+    [HttpPost("password")]
+    public async Task<ActionResult> SetPassword([FromBody] UserAuthDTO user)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var entry = await GetDbSet().FirstOrDefaultAsync(u => u.Mail == user.Mail);
+        if (entry == null) return NotFound();
+
+        entry.Password = user.Password;
+        return Ok();
+    }
+
+    //POST Methode, semantisch: Registrierung eines neuen Nutzers
+    //1. Das DTO kommt vom Body der HTTPRequest rein, und es wird überprüft, dass alle Attribute vom korrekten Datentyp und im korrekten Format vorhanden sind
+    //2. Das DTO wird aufs Model gemappt, indem den Attributen, die nicht vorhanden sind, entweder Default Werte oder generierte Werte angefügt werden
+    //3. Dem Model wird in der Datenbank ein Parameter für den Verifikationstoken angefügt, der selbe Token wird in einen Link eingefügt und per E-Mail verschickt
+    //4. Das Model wird in die Datenbank eingespeichert und eine Success Response zurück an den Client geschickt
+    [HttpPost]
+    public async override Task<ActionResult<UserDTO>> Create([FromBody] UserCreateDTO user)
+    {
+
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        var model = _mapper.Map<User>(user);
+        //TODO: Add Default value assignment if applicable here
+
+        model.verificationToken = GenerateVerificationToken();
+
+        var _values = new Dictionary<String, String>
+        {
+            { "name", model.Name! },
+            { "token", model.verificationToken },
+            { "toEmail", model.Mail }
+        };
+
+        await _emailService.SendMailAsync(0, _values);
+
+        _context.Users.Add(model);
+        await _context.SaveChangesAsync();
+
+        return CreatedAtAction(nameof(GetById), new { id = model.Id }, _mapper.Map<UserDTO>(model));
+    }
+
+    [HttpPut("revokeAccess/{id}/{permId}")]
+    public async Task<ActionResult> RevokeAccess (int id, int permId){
+        var user = await GetDbSet().FirstOrDefaultAsync(u => u.Id == id);
+        if(user == null) return NotFound();
+
+        var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.Id == permId);
+        if(user == null) return NotFound();
+
+        _context.Permissions.Remove(permission);
+        await _context.SaveChangesAsync();
+
+        return Ok();
+    }
+
+    //Verify Methode, verifiziert die Email
+    //0. Im POST wird eine Mail geschickt in der ein Link mit dem verificationToken enthalten ist
+    //1. Der Token kommt als string rein
+    //2. Aus der DB wird ein Record gesucht, in dem dieser Token existiert
+    //3. IsVerified wird umgesetzt, was Webzugriff gewährt, der Token wird aus dem Record gelöscht
+    //4. Es geht ein einfaches 200 - OK zurück, ohne Inhalt => Auf der Client Seite wird hier weitergeleitet zum Passwort setzen
+    [AllowAnonymous]
+    [HttpGet("verify")]
+    public async Task<ActionResult> VerifyUser(string token)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.verificationToken == token);
+        if (user == null) return BadRequest("Invalider Token");
+
+        user.IsVerified = true;
+        user.verificationToken = "";
+
+        await _context.SaveChangesAsync();
+        return Ok();
+    }
+
+
+    // Rework this stuff with ADMIN only permissions, however the fuck that's supposed to work
+    protected override async Task<bool> HasReadPermission(User u, int UserId){
+        return true;
+    }
+    protected override async Task<bool> HasWritePermission(User u, int UserId){
+        return true;
+    }
+}
