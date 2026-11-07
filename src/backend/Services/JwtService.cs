@@ -19,7 +19,7 @@ public class JwtService : IJwtService
     //================================================================//
     //!!FALLS SICH DIESE WERTE IRGENDWANN ÄNDERN SOLLTEN ODER MÜSSEN!!//
     //  Die Sektion, aus der diese Werte kommen heißt "JwtSettings"   //
-    //  Und befindet sich in der Datei 'src/appsettings.json'         //
+    //  Und befindet sich in der Datei 'appsettings.json'             //
     //================================================================//
 
     public JwtService(IConfiguration config) => _settings = config;

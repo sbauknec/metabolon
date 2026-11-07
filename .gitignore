@@ -8,3 +8,7 @@
 
 # Ignore DB Migrations
 **/Migrations/
+
+#Node/Vite things
+**/node_modules/
+**/dist/

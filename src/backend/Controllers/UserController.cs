@@ -48,7 +48,11 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         //TODO: Token logic to determine login / password update
 
         if (!ModelState.IsValid) return BadRequest(ModelState);
+        Console.WriteLine($"Received email: [{user.Mail}]");
+        Console.WriteLine($"Connected database: {_context.Database.GetDbConnection().Database}");
+
         var entry = await _context.Users.FirstOrDefaultAsync(u => u.Mail == user.Mail);
+        Console.WriteLine(entry);
 
         //TODO: Hashing Logic
 
