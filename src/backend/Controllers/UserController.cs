@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 using metabolon.DTOs;
 using metabolon.Generic;
@@ -36,6 +37,15 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
     private readonly IEmailService _emailService = emailService;
 
 
+    [HttpGet("me")]
+    public async Task<ActionResult<UserDTO>> GetAuthenticatedUser(){
+
+        var UserId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == UserId);
+
+        return Ok(_mapper.Map<UserDTO>(user));
+    }
+
     // Login Methode
     //1. Das DTO kommt als Email - Passwort rein, und es wird überprüft
     //2. Es wird aus der DB ein Record gesucht, in dem die Email übereinstimmt
@@ -48,11 +58,8 @@ public class UserController(AppDbContext context, IMapper mapper, IJwtService jw
         //TODO: Token logic to determine login / password update
 
         if (!ModelState.IsValid) return BadRequest(ModelState);
-        Console.WriteLine($"Received email: [{user.Mail}]");
-        Console.WriteLine($"Connected database: {_context.Database.GetDbConnection().Database}");
 
         var entry = await _context.Users.FirstOrDefaultAsync(u => u.Mail == user.Mail);
-        Console.WriteLine(entry);
 
         //TODO: Hashing Logic
 

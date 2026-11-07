@@ -1,17 +1,21 @@
 <script setup>
     import { ref } from 'vue'
     import { api } from '@/services/api'
+    import { useRouter } from 'vue-router'
  
+    const router = useRouter()
+
     const email = ref('')
     const password = ref('')
 
     async function handleLogin() {
 
-        const res = await api.post('/User/login', {
+        await api.post('/User/login', {
             Mail: email.value,
             Password: password.value
         })
-        console.log(res)
+
+        router.push('/dashboard')
     }
 </script>
 

@@ -1,5 +1,4 @@
 const BASE_URL = '/api'
-const KEY_STORE = 'metabolon.api.token'
 
 async function request(endpoint, options={}){
     const headers = new Headers(options.headers)
@@ -7,9 +6,9 @@ async function request(endpoint, options={}){
     if(options.body != null && !(options.body instanceof FormData))
         headers.set('Content-Type', 'application/json')
 
-    const token = getAccessToken()
-    if(token)
-        headers.set('Authorization', `Bearer ${token}`)
+    //const token = getAccessToken()
+    //if(token)
+    //    headers.set('Authorization', `Bearer ${token}`)
 
     const response = await fetch(`${BASE_URL}${endpoint}`, {
         ...options,
@@ -57,16 +56,4 @@ export const api = {
     delete(endpoint){
         return request(endpoint, { method: 'DELETE' })
     }
-}
-
-export function setAccessToken(token){
-    sessionStorage.setItem(KEY_STORE, token)
-}
-
-export function getAccessToken(){
-    return sessionStorage.getItem(KEY_STORE)
-}
-
-export function clearAccessToken(){
-    sessionStorage.removeItem(KEY_STORE)
 }

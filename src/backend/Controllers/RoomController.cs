@@ -3,6 +3,7 @@ namespace metabolon.Controllers;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 using metabolon.DTOs;
 using metabolon.Generic;
@@ -19,13 +20,25 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
 
     [HttpGet]
     public override async Task<ActionResult<IEnumerable<RoomDTO>>> GetAll(){
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
         if(permission == 0) return Forbid("Not permitted to view this list");
         else{
             var rooms = GetDbSet().ToListAsync();
             return Ok(_mapper.Map<RoomDTO>(rooms));
         }        
+    }
+
+    [HttpGet("mine")]
+    public async Task<ActionResult<IEnumerable<RoomDTO>>> GetByAuth(){
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+        var rooms = await _context.Rooms
+            .AsNoTracking()
+            .Where(r => _context.Permissions
+                .Any(p => p.UserId == userId && p.RoomId == r.Id))
+            .ToListAsync();
+
+        return Ok(_mapper.Map<List<RoomDTO>>(rooms));
     }
 
     // GET Methode mit ID
@@ -37,7 +50,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
     [HttpGet("{id}")]
     public override async Task<ActionResult<RoomDTO>> GetById(int id)
     {
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
         if(permission == null) return Forbid("No Access Permission");
 
@@ -98,7 +111,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
 
     [HttpPost]
     public async override Task<ActionResult<RoomDTO>> Create([FromBody] RoomCreateDTO dto){
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
         if(permission == 0) return Forbid("Not permitted to create object");
         else{
@@ -115,7 +128,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
 
     [HttpPut("{id}")]
     public async override Task<ActionResult<RoomDTO>> Update([FromBody] RoomCreateDTO dto, int id){
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
         if(permission == null || !permission.Write) return Forbid("Can't edit entity");
         else{
@@ -139,7 +152,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
     [HttpPut("linkDocument/{id}")]
     public async Task<ActionResult> linkDocument(int id, int DocumentId)
     {
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Permissions.FirstOrDefaultAsync(p => p.UserId == userId && p.RoomId == id);
         if(permission == null || !permission.Write) return Forbid("Can't edit entity");
 
@@ -161,7 +174,7 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
 
     [HttpDelete("{id}")]
     public async override Task<ActionResult> Delete(int id){
-        var userId = int.Parse(User.FindFirst("Sub")!.Value);
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
         if(permission == 0) return Forbid("Not permitted to create object");
 
