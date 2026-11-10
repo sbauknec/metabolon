@@ -24,8 +24,8 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
         var permission = await _context.Users.Where(u => u.Id == userId).Select(u => u.role).FirstOrDefaultAsync();
         if(permission == 0) return Forbid("Not permitted to view this list");
         else{
-            var rooms = GetDbSet().ToListAsync();
-            return Ok(_mapper.Map<RoomDTO>(rooms));
+            var rooms = await GetDbSet().ToListAsync();
+            return Ok(_mapper.Map<List<RoomDTO>>(rooms));
         }        
     }
 
@@ -83,7 +83,8 @@ public class RoomController(AppDbContext context, IMapper mapper) : GenericContr
                                 {
                                     Id = d.Id,
                                     Name = d.Name,
-                                    Location = d.Location
+                                    Location = d.Location,
+                                    Type = d.Type
                                 }).ToList(),
                             Materials = _context.Items
                                 .Where(i => i.RoomId == r.Id)

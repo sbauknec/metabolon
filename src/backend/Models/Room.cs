@@ -3,11 +3,15 @@ namespace metabolon.Models;
 using metabolon.DTOs;
 using metabolon.Generic;
 
+using System.ComponentModel.DataAnnotations.Schema;
+
 public class Room : IEntity
 {
     public int Id { get; set; }
     public required string Name { get; set; }
     public int? Supervisor_Id { get; set; }
+
+    [ForeignKey(nameof(Supervisor_Id))]
     public User? Supervisor { get; set; }
     
     //Verknüpfung Dokumente

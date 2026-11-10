@@ -31,11 +31,15 @@
 
             <nav class="navigation">
                 <RouterLink to="/dashboard">Dashboard</RouterLink>
+                <RouterLink to="/roomlist">Räume</RouterLink>
+                <RouterLink to="/devicelist">Geräte</RouterLink>
+                <RouterLink to="/itemlist">Gegenstände</RouterLink>
             </nav>
         </div>
 
         <div class="sidebar-footer">
             Metabolon Verwaltung und Informationssystem
+            <RouterLink to="/">Shortcut Login</RouterLink>
         </div>
     </aside>
 </template>

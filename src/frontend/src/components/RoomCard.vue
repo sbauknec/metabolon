@@ -8,14 +8,16 @@
 </script>
 
 <template>
-    <div class="card">
-        <h2>{{ room.name }}</h2>
-        <img src="../assets/csm_Lagerarten_3c4e8dd43f.jpg" />
-        <p>Kurzbeschreibung [...]</p>
-        <p>Geräte</p>
-        <p>Materialien</p>
-        <p>Dokumente</p>
-    </div>
+    <RouterLink :to="`/room/${room.id}`">
+        <div class="card">
+            <h2>{{ room.name }}</h2>
+            <img src="../assets/csm_Lagerarten_3c4e8dd43f.jpg" />
+            <p>Kurzbeschreibung [...]</p>
+            <p>Geräte</p>
+            <p>Materialien</p>
+            <p>Dokumente</p>
+        </div>
+    </RouterLink>
 </template>
 
 <style scoped>
@@ -45,5 +47,9 @@
     margin: 0 22px;
     padding: 10px 0;
     border-bottom: 1px solid #707070;
+}
+
+a{
+    text-decoration: none;
 }
 </style>

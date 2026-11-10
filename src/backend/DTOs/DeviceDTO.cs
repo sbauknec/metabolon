@@ -12,6 +12,7 @@ public class DeviceDTO
 {
     public int Id { get; set; }
     public required string Name { get; set; }
+    public required string Type { get; set; }
     public DateTime? Maintenance_Date { get; set; }
     public bool? IsMaintained { get; set; }
     public string? Location { get; set; }
@@ -29,16 +30,18 @@ public class DeviceQueryDTO
 {
     public int Id { get; set; }
     public required string Name { get; set; }
+    public required string Type { get; set; }
     public string? Location { get; set; }
     public int? RoomId { get; set; }
 }
 
 //DTO - Create
 //Input DTO
-//Zum Erstellen ist nur ein Name erforderlich, die anderen Felder sind eher optional
+//Zum Erstellen ist nur ein Name und ein Typ erforderlich, die anderen Felder sind eher optional
 public class DeviceCreateDTO
 {
     public required string Name { get; set; }
+    public required string Type { get; set; }
     public DateTime? Maintenance_Date { get; set; }
     public bool? IsMaintained { get; set; } = false;
     public string? Location { get; set; }

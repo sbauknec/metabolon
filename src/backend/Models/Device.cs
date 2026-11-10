@@ -6,6 +6,7 @@ public class Device : IEntity
 {
     public int Id { get; set; }
     public required string Name { get; set; }
+    public required string Type { get; set; }
     public DateTime Maintenance_Date { get; set; } = DateTime.UtcNow;
     public bool IsMaintained { get; set; } = false;
     public string? Location { get; set; } = "";
