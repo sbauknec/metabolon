@@ -34,6 +34,7 @@
                 <RouterLink to="/roomlist">Räume</RouterLink>
                 <RouterLink to="/devicelist">Geräte</RouterLink>
                 <RouterLink to="/itemlist">Gegenstände</RouterLink>
+                <RouterLink to="/userlist">Nutzer</RouterLink>
             </nav>
         </div>
 

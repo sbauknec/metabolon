@@ -35,15 +35,18 @@
 <style scoped>
 .card{
     display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
     background-color: #707070;
     color: #fff;
-    height: 6em;
+    height: 5em;
     border: 1px solid #fff;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     padding: 0.5em 2em;
 }
 .descr{
-    margin-top: 1.25em;
+    margin-top: 0.5em;
 }
 .descr h2{
     margin: 0;
@@ -56,8 +59,7 @@
     font-weight: 300;
 }
 .card svg{
-    width: 15%;
-    margin-left: 15em;
+    width: 4em;
 }
 
 a{

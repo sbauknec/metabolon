@@ -8,7 +8,7 @@
 </script>
 
 <template>
-    <RouterLink :to="`/device/${item.id}`" :aria-label="`Open ${item.name}`">
+    <RouterLink :to="`/item/${item.id}`" :aria-label="`Open ${item.name}`">
         <div class="card">
             <div class="descr">
                 <h2>{{ item.name }}</h2>

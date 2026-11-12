@@ -2,11 +2,19 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import LoginView from '@/views/LoginView.vue'
 import DashboardView from '@/views/DashboardView.vue'
+
 import RoomListView from '@/views/RoomListView.vue'
+import RoomView from '@/views/RoomView.vue'
+
 import DeviceListView from '@/views/DeviceListView.vue'
+
+
 import ItemListView from '@/views/ItemListView.vue'
 
-import RoomView from '@/views/RoomView.vue'
+
+import UserListView from '@/views/UserListView.vue'
+
+
 
 import PageLayout from '@/layouts/PageLayout.vue'
 
@@ -34,6 +42,11 @@ const router = createRouter({
           component: RoomListView
         },
         {
+          path: '/room/:id',
+          name: 'room',
+          component: RoomView
+        },
+        {
           path: '/devicelist/',
           name: 'devicelist',
           component: DeviceListView
@@ -44,9 +57,9 @@ const router = createRouter({
           component: ItemListView
         },
         {
-          path: '/room/:id',
-          name: 'room',
-          component: RoomView
+          path: '/userlist',
+          name: 'userlist',
+          component: UserListView
         }
       ]
     }
